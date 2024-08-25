@@ -5,21 +5,12 @@ version = "0.1.0"
 authors = [{ name = "Amadej Kastelic", email = "amadejkastelic7@gmail.com" }]
 requires-python = "~=3.8"
 keywords = ["24ur", "api", "scraper"]
-dependencies = [
-  "aiohttp <4",
-  "beautifulsoup4 <5"
-]
+dependencies = ["aiohttp<4", "beautifulsoup4<5"]
 
 [project.optional-dependencies]
-dev = [
-  "black",
-  "flake",
-  "packaging"
-]
-lint = [
-  "flake8 >=7.1.1",
-  "black >=24.1.0"
-]
+download = ["m3u8downloader==0.10.1"]
+dev = ["black", "flake", "packaging"]
+lint = ["flake8>=7.1.1", "black>=24.1.0"]
 
 [tool.black]
 line-length = 120

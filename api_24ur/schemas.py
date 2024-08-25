@@ -225,7 +225,7 @@ class Article:
     allow_new_comments: typing.Optional[int] = None
     has_votes: typing.Optional[str] = None
     is_slim: typing.Optional[bool] = None
-    body_items: typing.List[BodyItems] = None
+    body_items: typing.Optional[typing.List[BodyItems]] = None
     has_videos: typing.Optional[int] = None
     has_galleries: typing.Optional[int] = None
     has_streams: typing.Optional[int] = None

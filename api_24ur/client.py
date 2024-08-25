@@ -1,8 +1,12 @@
+import datetime
+import io
+import sys
 import typing
 import uuid
 
 import aiohttp
 
+from api_24ur import downloader
 from api_24ur import schemas
 from api_24ur import types
 
@@ -39,10 +43,12 @@ class Client:
         }
         self._graph_headers = GRAPH_API_HEADERS | self._article_headers
 
-    async def get_article_by_url(self, url: str, image_size_px: int = 1200) -> types.Article:
-        """
-        Fetches article by URL
-        """
+    async def get_article_by_url(
+        self,
+        url: str,
+        num_comments: int = 0,
+        image_size_px: int = 1200,
+    ) -> types.Article:
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 url=ARTICLE_API_URL.format(path=self._path_from_url(url)),
@@ -51,7 +57,64 @@ class Client:
                 data = await response.json()
 
         article = schemas.Root.from_dict(data).data.article
-        return article
+
+        return types.Article(
+            id=article.id,
+            title=article.title,
+            summary=article.summary,
+            content='\n'.join([item.body if item.body else '' for item in article.body_items or []]),
+            place=article.place,
+            num_views=article.nb_views,
+            images=[
+                types.Image(
+                    caption=image.caption,
+                    url=image.src.replace('PLACEHOLDER', f'{image_size_px}xX'),
+                    height=image.height,
+                    width=image.width,
+                )
+                for image in article.images or []
+            ],
+            videos=[
+                types.Video(
+                    title=video.title,
+                    url=await self._fetch_video_stream_url(video.id),
+                )
+                for video in article.videos
+            ],
+            comments=await self._fetch_comments(article_id=article.id, limit=num_comments) if num_comments > 0 else [],
+        )
+
+    async def download_video(
+        self,
+        stream_url: str,
+        download_path: str = '/tmp',
+        tmp_dir: str = '/tmp',
+        pool_size: int = 5,
+        max_bitrate: int = sys.maxsize,
+    ) -> str:
+        await downloader.Downloader(
+            url=stream_url,
+            download_path=download_path,
+            tmp_dir=tmp_dir,
+            pool_size=pool_size,
+            max_bitrate=max_bitrate,
+        ).download()
+
+    async def download_video_bytes(
+        self,
+        stream_url: str,
+        download_path: str = '/tmp',
+        tmp_dir: str = '/tmp',
+        pool_size: int = 5,
+        max_bitrate: int = sys.maxsize,
+    ) -> io.BytesIO:
+        return await downloader.Downloader(
+            url=stream_url,
+            download_path=download_path,
+            tmp_dir=tmp_dir,
+            pool_size=pool_size,
+            max_bitrate=max_bitrate,
+        ).download_bytes()
 
     async def _fetch_video_stream_url(self, video_id: int) -> str:
         request_body = VIDEO_STREAM_PAYLOAD.format(video_id=video_id)
@@ -67,7 +130,7 @@ class Client:
 
         return schemas.VideoHls.from_dict(data.get('data', {}).get('videoHlsUrl', {})).url
 
-    async def _get_comments(self, article_id: int, limit: int = 1000) -> typing.List[schemas.Comment]:
+    async def _fetch_comments(self, article_id: int, limit: int = 1000) -> typing.List[types.Comment]:
         request_body = COMMENTS_PAYLOAD.format(article_id=article_id, limit=limit)
         headers = self._graph_headers | {'content-length': str(len(request_body))}
 
@@ -79,10 +142,27 @@ class Client:
             ) as response:
                 data = await response.json()
 
-        return [
-            schemas.Comment.from_dict(comment)
-            for comment in data.get('data', {}).get('comments', {}).get('comments', [])
-        ]
+        return self._parse_comments(
+            [
+                schemas.Comment.from_dict(comment)
+                for comment in data.get('data', {}).get('comments', {}).get('comments', [])
+            ]
+        )
 
     def _path_from_url(self, url: str) -> str:
         return url.split('?')[0].split('.com')[1]
+
+    def _parse_comments(self, comments: typing.List[schemas.Comment]) -> typing.List[types.Comment]:
+        return [
+            types.Comment(
+                author=comment.owner.nickname if comment.owner else 'Unknown',
+                author_avatar_url=comment.owner.avatar_url if comment.owner else None,
+                posted_at=datetime.datetime.fromtimestamp(comment.created_on) if comment.created_on else None,
+                content=comment.body,
+                likes=comment.likes.positive,
+                dislikes=comment.likes.negative,
+                score=comment.likes.sum,
+                replies=self._parse_comments(comment.replies) if comment.replies else [],
+            )
+            for comment in comments
+        ]

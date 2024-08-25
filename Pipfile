@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 aiohttp = "==3.10.5"
 beautifulsoup4 = "==4.12.3"
+m3u8downloader = "==0.10.1"
 
 [dev-packages]
 black = "==24.8.0"

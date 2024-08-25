@@ -4,3 +4,7 @@ class BaseException(Exception):
 
 class ApiException(BaseException):
     pass
+
+
+class DownloadException(BaseException):
+    pass

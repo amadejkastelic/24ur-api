@@ -4,6 +4,7 @@ pkgs.mkShell {
     python312
     python312Packages.pip
     pipenv
+    ffmpeg
     curl
     jq
   ];
