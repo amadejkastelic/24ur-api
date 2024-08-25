@@ -103,14 +103,13 @@ class Client:
     async def download_video_bytes(
         self,
         stream_url: str,
-        download_path: str = '/tmp',
         tmp_dir: str = '/tmp',
         pool_size: int = 5,
         max_bitrate: int = sys.maxsize,
     ) -> io.BytesIO:
         return await downloader.Downloader(
             url=stream_url,
-            download_path=download_path,
+            download_path=tmp_dir,
             tmp_dir=tmp_dir,
             pool_size=pool_size,
             max_bitrate=max_bitrate,
