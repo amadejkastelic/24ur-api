@@ -25,7 +25,7 @@ jobs:
 
       - name: Build the package
         run: |
-          c
+          python -m build
 
       - name: Publish to PyPI
         env:
