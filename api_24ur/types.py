@@ -32,6 +32,7 @@ class Comment:
 @dataclasses.dataclass
 class Article:
     id: typing.Optional[str] = None
+    author: typing.Optional[str] = None
     title: typing.Optional[str] = None
     summary: typing.Optional[str] = None
     content: typing.Optional[str] = None

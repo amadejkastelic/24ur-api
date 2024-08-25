@@ -60,6 +60,7 @@ class Client:
 
         return types.Article(
             id=article.id,
+            author=article.source,
             title=article.title,
             summary=article.summary,
             content='\n'.join([item.body if item.body else '' for item in article.body_items or []]),
