@@ -65,6 +65,7 @@ class Client:
             content='\n'.join([item.body if item.body else '' for item in article.body_items or []]),
             place=article.place,
             num_views=article.nb_views,
+            posted_at=datetime.datetime.fromtimestamp(article.date) if article.date else None,
             images=[
                 types.Image(
                     caption=image.caption,

@@ -90,7 +90,7 @@ class Section:
     meta_keywords: typing.Optional[str] = None
     meta_description: typing.Optional[str] = None
     window_title: typing.Optional[str] = None
-    gemius_code: typing.Optional[datetime.datetime] = None
+    gemius_code: typing.Optional[str] = None
     path: typing.Optional[str] = None
     root_section_id: typing.Optional[int] = None
     grid_section_id: typing.Optional[int] = None
