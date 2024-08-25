@@ -1,7 +1,7 @@
 [project]
 name = "24ur-api"
 description = "Unofficial 24ur API"
-version = "0.1.1"
+version = "0.1.2"
 readme = "README.md"
 authors = [{ name = "Amadej Kastelic", email = "amadejkastelic7@gmail.com" }]
 requires-python = "~=3.8"
