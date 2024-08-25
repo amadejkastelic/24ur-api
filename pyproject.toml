@@ -7,7 +7,12 @@ authors = [{ name = "Amadej Kastelic", email = "amadejkastelic7@gmail.com" }]
 requires-python = "~=3.8"
 keywords = ["24ur", "api", "scraper"]
 dependencies = ["aiohttp<4", "beautifulsoup4<5"]
-homepage = "https://github.com/amadejkastelic/24ur-api"
+license = { text = "MIT" }
+
+[project.urls]
+"Homepage" = "https://github.com/amadejkastelic/24ur-api"
+"Source" = "https://github.com/amadejkastelic/24ur-api"
+"Tracker" = "https://github.com/amadejkastelic/24ur-api/issues"
 
 [project.optional-dependencies]
 download = ["m3u8downloader==0.10.1"]
