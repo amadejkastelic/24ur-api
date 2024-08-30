@@ -7,7 +7,7 @@ pip install 24ur-api
 ```
 - With video download support
 ```bash
-pip install 24ur-api[download]
+pip install 24ur-api[video]
 ```
 
 ## Usage
