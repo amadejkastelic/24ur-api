@@ -1,5 +1,9 @@
 # Unofficial 24ur API Client
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/amadejkastelic/24ur-api/blob/main/LICENSE)
+[![PyPI - Version](https://img.shields.io/pypi/v/24ur-api.svg)](https://pypi.org/project/24ur-api/)
+[![Downloads](https://static.pepy.tech/badge/24ur-api/month)](https://www.pepy.tech/projects/24ur-api)
+
 ## Installation
 
 ```bash
