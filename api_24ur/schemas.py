@@ -21,7 +21,7 @@ class Owner:
 
     @classmethod
     def from_dict(cls, data: typing.Dict) -> 'Owner':
-        cls(
+        return cls(
             avatar_url=data.pop('avatarUrl'),
             **data,
         )

@@ -3,6 +3,7 @@ import io
 import sys
 import typing
 import uuid
+from urllib.parse import urlparse
 
 import aiohttp
 
@@ -151,7 +152,7 @@ class Client:
         )
 
     def _path_from_url(self, url: str) -> str:
-        return url.split('?')[0].split('.com')[1]
+        return urlparse(url).path
 
     def _parse_comments(self, comments: typing.List[schemas.Comment]) -> typing.List[types.Comment]:
         return [

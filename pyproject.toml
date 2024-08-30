@@ -1,7 +1,7 @@
 [project]
 name = "24ur-api"
 description = "Unofficial 24ur API"
-version = "0.1.4"
+version = "0.1.5"
 readme = "README.md"
 authors = [{ name = "Amadej Kastelic", email = "amadejkastelic7@gmail.com" }]
 requires-python = "~=3.8"
@@ -15,7 +15,7 @@ license = { text = "MIT" }
 "Tracker" = "https://github.com/amadejkastelic/24ur-api/issues"
 
 [project.optional-dependencies]
-download = ["m3u8downloader==0.10.1"]
+video = ["m3u8downloader==0.10.1"]
 dev = ["black", "flake", "packaging"]
 lint = ["flake8>=7.1.1", "black>=24.1.0"]
 
