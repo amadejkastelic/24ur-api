@@ -17,7 +17,6 @@ def monkey_path_m3u8downloader_configlogger():
     class BlockingFinder(importlib_abc.MetaPathFinder):
         def find_spec(self, fullname, path, target=None):
             if fullname == 'm3u8downloader.configlogger':
-                print(f"Blocking import of: {fullname}")
                 return importlib_machinery.ModuleSpec(fullname, BlockingLoader())
             return None
 

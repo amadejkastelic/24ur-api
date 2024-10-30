@@ -15,7 +15,7 @@ except ImportError as e:
 from api_24ur import exceptions
 
 
-# Monkeypath lib
+# Monkeypatch lib
 def get_local_file_for_url(tempdir, url, path_line=None):
     if path_line and path_line.startswith(tempdir):
         return path_line
