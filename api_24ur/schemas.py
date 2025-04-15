@@ -65,6 +65,7 @@ class BodyItems:
     id: typing.Optional[int] = None
     index: typing.Optional[int] = None
     data: typing.Optional[str] = None
+    weight: typing.Optional[typing.Union[int, float]] = None
 
     @classmethod
     def from_dict(cls, data: typing.Dict) -> 'BodyItems':
