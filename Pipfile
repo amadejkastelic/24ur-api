@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "==3.11.6"
-beautifulsoup4 = "==4.13.3"
-m3u8downloader = "==0.10.1"
+aiohttp = "==3.12.13"
+beautifulsoup4 = "==4.13.4"
+yt-dlp = "==2025.6.9"
 
 [dev-packages]
 black = "==25.1.0"
@@ -15,4 +15,4 @@ flake8-import-order = "==0.18.2"
 isort = "==6.0.1"
 
 [requires]
-python_version = "3.12"
+python_version = ">=3.11"
