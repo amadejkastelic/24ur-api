@@ -22,7 +22,7 @@ pip install 24ur-api[video]
 nix build .#default
 ```
 
-### Development
+## Development
 
 ```bash
 nix develop
