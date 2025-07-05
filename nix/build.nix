@@ -20,4 +20,8 @@ pythonPkgs.buildPythonPackage {
   ];
 
   pythonImportsCheck = [ "api_24ur" ];
+
+  postInstall = ''
+    cp dist/*.whl $out/
+  '';
 }
