@@ -14,6 +14,20 @@ pip install 24ur-api
 pip install 24ur-api[video]
 ```
 
+## Building
+
+### Nix
+
+```bash
+nix build .#default
+```
+
+### Development
+
+```bash
+nix develop
+```
+
 ## Usage
 
 ```python

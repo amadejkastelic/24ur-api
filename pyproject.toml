@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [{ name = "Amadej Kastelic", email = "amadejkastelic7@gmail.com" }]
 requires-python = "~=3.8"
 keywords = ["24ur", "api", "scraper"]
-dependencies = ["aiohttp<4", "beautifulsoup4<5"]
+dependencies = ["aiohttp<4"]
 license = { text = "MIT" }
 
 [project.urls]
@@ -20,11 +20,24 @@ build-backend = "setuptools.build_meta"
 
 [project.optional-dependencies]
 video = ["yt-dlp"]
-dev = ["black", "flake", "packaging"]
-lint = ["flake8>=7.1.1", "black>=24.1.0"]
+dev = ["ruff", "packaging"]
 
-[tool.black]
+[tool.setuptools.packages.find]
+include = ["api_24ur"]
+
+[tool.ruff]
 line-length = 120
-target-version = ['py312']
-include = '\.pyi?$'
-skip-string-normalization = true
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
