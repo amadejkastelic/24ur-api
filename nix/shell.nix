@@ -5,6 +5,7 @@
 pkgs.mkShell {
   packages = [
     venv
+    pkgs.httptoolkit
     pkgs.nixfmt-tree
     pkgs.twine
   ];

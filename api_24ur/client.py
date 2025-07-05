@@ -25,7 +25,8 @@ GRAPH_API_HEADERS = {
     'host': 'gql.24ur.si',
 }
 VIDEO_STREAM_PAYLOAD = '{{videoHlsUrl(id: {video_id}, siteId: 1) {{url info infoCode}}}}'
-COMMENTS_PAYLOAD = '{{ comments(itemType: ARTICLE, itemId: {article_id}, perPage: {limit}, nextId: "") {{ total totalShown nextId comments {{ id createdOn body owner {{ id nickname avatarUrl }} likes {{ sum negative positive }} replies {{ id body createdOn owner {{ id nickname avatarUrl }} likes {{ sum negative positive }}}}}}}}}}'  # noqa: E501
+COMMENTS_PAYLOAD = '{{comments(itemType: ARTICLE, itemId: {article_id}, perPage: {limit}, nextId: "{next_id}") {{ total totalShown nextId comments {{ id createdOn body owner {{ id nickname avatarUrl }} likes {{ sum negative positive }} replies {{ id body createdOn owner {{ id nickname avatarUrl }} likes {{ sum negative positive }}}}}}}}}}'  # noqa: E501
+COMMENTS_MAX_PAGE_SIZE = 40
 
 DEFAULT_USER_AGENT = '24ur Android App 4.4.1 (168)'
 
@@ -126,23 +127,33 @@ class Client:
         return schemas.VideoHls.from_dict(data.get('data', {}).get('videoHlsUrl', {})).url
 
     async def _fetch_comments(self, article_id: int, limit: int = 1000) -> typing.List[types.Comment]:
-        request_body = COMMENTS_PAYLOAD.format(article_id=article_id, limit=limit)
-        headers = self._graph_headers | {'content-length': str(len(request_body))}
+        comments = []
 
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                url=GRAPH_API_URL,
-                data=request_body,
-                headers=headers,
-            ) as response:
-                data = await response.json()
+        next_id = ''
+        for _ in range(limit // COMMENTS_MAX_PAGE_SIZE + 1):
+            request_body = COMMENTS_PAYLOAD.format(article_id=article_id, limit=limit, next_id=next_id)
+            headers = self._graph_headers | {'content-length': str(len(request_body))}
 
-        return self._parse_comments(
-            [
-                schemas.Comment.from_dict(comment)
-                for comment in data.get('data', {}).get('comments', {}).get('comments', [])
-            ]
-        )
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    url=GRAPH_API_URL,
+                    data=request_body,
+                    headers=headers,
+                ) as response:
+                    data = await response.json()
+
+            comments += self._parse_comments(
+                [
+                    schemas.Comment.from_dict(comment)
+                    for comment in data.get('data', {}).get('comments', {}).get('comments', [])
+                ]
+            )
+
+            next_id = data.get('data', {}).get('comments', {}).get('nextId', '')
+            if not next_id:
+                break
+
+        return comments[:limit]
 
     def _path_from_url(self, url: str) -> str:
         return urlparse(url).path
