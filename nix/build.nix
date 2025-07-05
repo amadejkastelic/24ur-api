@@ -10,18 +10,21 @@ pythonPkgs.buildPythonPackage {
 
   src = ../.;
 
-  build-system = [ pythonPkgs.setuptools ];
-
-  pythonRelaxDeps = [ "beautifulsoup4" ];
+  build-system = [ pythonPkgs.hatchling ];
 
   dependencies = [
     pythonPkgs.aiohttp
     pythonPkgs.yt-dlp
   ];
 
-  pythonImportsCheck = [ "api_24ur" ];
+  # We need to also build the source distribution if building dist
+  preInstall = ''
+    hatchling build -t sdist
+  '';
 
   postInstall = ''
-    cp dist/*.whl $out/
+    cp dist/*.tar.gz $out
   '';
+
+  pythonImportsCheck = [ "api_24ur" ];
 }

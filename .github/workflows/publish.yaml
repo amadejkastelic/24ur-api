@@ -43,24 +43,26 @@ jobs:
         uses: nicknovitski/nix-develop@v1
 
       - name: Build with Nix
-        run: nix build
+        run: nix build .#default.dist
 
-      - name: Find built wheel
-        id: find-wheel
+      - name: Find built distributions
+        id: find-dists
         run: |
-          WHEEL_PATH=$(find result/ -name "*.whl" | head -n1)
-          if [ -z "$WHEEL_PATH" ]; then
-            echo "No wheel file found in result/"
+          WHEELS=$(find result-dist/ -name "*.whl" | xargs)
+          SDISTS=$(find result-dist/ -name "*.tar.gz" | xargs)
+          if [ -z "$WHEELS" ] && [ -z "$SDISTS" ]; then
+            echo "No distributions found in result-dist/"
             exit 1
           fi
-          echo "wheel=$WHEEL_PATH" >> $GITHUB_OUTPUT
+          echo "wheels=$WHEELS" >> $GITHUB_OUTPUT
+          echo "sdists=$SDISTS" >> $GITHUB_OUTPUT
 
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          nix develop --command twine upload "${{ steps.find-wheel.outputs.wheel }}"
+          nix develop --command twine upload ${{ steps.find-dists.outputs.wheels }} ${{ steps.find-dists.outputs.sdists }}
 
       - name: Cleanup
-        run: rm -rf result
+        run: rm -rf result-dist
