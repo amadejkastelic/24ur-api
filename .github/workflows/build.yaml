@@ -1,14 +1,15 @@
-name: Publish Python Package
+name: Build
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
-
+    name: Build
     steps:
       - name: Check out source repository
         uses: actions/checkout@v4
@@ -42,21 +43,6 @@ jobs:
       - name: Set up Nix environment
         uses: nicknovitski/nix-develop@v1
 
-      - name: Build with Nix
-        run: nix build
-
-      - name: Find built wheel
-        id: find-wheel
+      - name: nix flake check
         run: |
-          WHEEL_PATH=$(find result/ -name "*.whl" | head -n1)
-          echo "wheel=$WHEEL_PATH" >> $GITHUB_OUTPUT
-
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: |
-          twine upload ${{ steps.find-wheel.outputs.wheel }}
-
-      - name: Cleanup
-        run: rm -rf result
+          nix flake check -L
