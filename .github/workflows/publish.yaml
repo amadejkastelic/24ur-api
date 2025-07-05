@@ -31,7 +31,6 @@ jobs:
         with:
           primary-key: nix-${{ runner.os }}-${{ env.flake_hash }}
           restore-prefixes-first-match: nix-${{ runner.os }}-
-
           # Purge old caches and garbage collect new one if there wasn't an exact match
           purge: true
           purge-prefixes: nix-${{ runner.os }}-
@@ -49,6 +48,10 @@ jobs:
         id: find-wheel
         run: |
           WHEEL_PATH=$(find result/ -name "*.whl" | head -n1)
+          if [ -z "$WHEEL_PATH" ]; then
+            echo "No wheel file found in result/"
+            exit 1
+          fi
           echo "wheel=$WHEEL_PATH" >> $GITHUB_OUTPUT
 
       - name: Publish to PyPI
@@ -56,7 +59,7 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          twine upload ${{ steps.find-wheel.outputs.wheel }}
+          nix develop --command twine upload "${{ steps.find-wheel.outputs.wheel }}"
 
       - name: Cleanup
         run: rm -rf result
