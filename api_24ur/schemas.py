@@ -66,10 +66,14 @@ class BodyItems:
     index: typing.Optional[int] = None
     data: typing.Optional[str] = None
     weight: typing.Optional[typing.Union[int, float]] = None
+    uri_id: typing.Optional[str] = None
 
     @classmethod
     def from_dict(cls, data: typing.Dict) -> 'BodyItems':
-        return cls(**data)
+        return cls(
+            uri_id=data.pop('uriId', None),
+            **data,
+        )
 
 
 @dataclasses.dataclass
